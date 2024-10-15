@@ -59,19 +59,21 @@ grid_reader_cursor_right(struct grid_reader *gr, int wrap, int all)
 		grid_reader_cursor_start_of_line(gr, 0);
 		grid_reader_cursor_down(gr);
 	} else if (gr->cx < px) {
-		gr->cx++;
-		while (gr->cx < px) {
-			grid_get_cell(gr->gd, gr->cx, gr->cy, &gc);
+		u_int cx = gr->cx + 1;
+		while (cx < px) {
+			grid_get_cell(gr->gd, cx, gr->cy, &gc);
 			if (~gc.flags & GRID_FLAG_PADDING)
 				break;
-			gr->cx++;
+			cx++;
 		}
+		if (~gc.flags & GRID_FLAG_PADDING)
+			gr->cx = cx;
 	}
 }
 
-/* Move cursor back one position. */
+/* Move cursor back character's first cell. */
 void
-grid_reader_cursor_left(struct grid_reader *gr, int wrap)
+grid_reader_cursor_char_start(struct grid_reader *gr)
 {
 	struct grid_cell	gc;
 
@@ -81,6 +83,15 @@ grid_reader_cursor_left(struct grid_reader *gr, int wrap)
 			break;
 		gr->cx--;
 	}
+}
+
+/* Move cursor back one position. */
+void
+grid_reader_cursor_left(struct grid_reader *gr, int wrap)
+{
+	struct grid_cell	gc;
+
+	grid_reader_cursor_char_start(gr);
 	if (gr->cx == 0 && gr->cy > 0 &&
 	    (wrap ||
 	     grid_get_line(gr->gd, gr->cy - 1)->flags & GRID_LINE_WRAPPED)) {
@@ -88,6 +99,7 @@ grid_reader_cursor_left(struct grid_reader *gr, int wrap)
 		grid_reader_cursor_end_of_line(gr, 0, 0);
 	} else if (gr->cx > 0)
 		gr->cx--;
+	grid_reader_cursor_char_start(gr);
 }
 
 /* Move cursor down one line. */
