@@ -5084,7 +5084,7 @@ window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 		if ((data->cx >= data->lastsx && data->cx != px) ||
 		    data->cx > px)
 		{
-			window_copy_update_cursor(wme, px, data->cy, 0);
+			window_copy_update_cursor(wme, px, data->cy, 1);
 			if (window_copy_update_selection(wme, 1, 0))
 				window_copy_redraw_lines(wme, data->cy, 1);
 		}
@@ -5153,7 +5153,7 @@ window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 		if ((data->cx >= data->lastsx && data->cx != px) ||
 		    data->cx > px)
 		{
-			window_copy_update_cursor(wme, px, data->cy, 0);
+			window_copy_update_cursor(wme, px, data->cy, 1);
 			if (window_copy_update_selection(wme, 1, 0))
 				window_copy_redraw_lines(wme, data->cy, 1);
 		}
