@@ -116,6 +116,7 @@ static void	window_copy_cursor_end_of_line(struct window_mode_entry *);
 static void	window_copy_other_end(struct window_mode_entry *);
 static void	window_copy_cursor_left(struct window_mode_entry *);
 static void	window_copy_cursor_right(struct window_mode_entry *, int);
+static void	window_copy_cursor_start_of_character(struct window_mode_entry *);
 static void	window_copy_cursor_up(struct window_mode_entry *, int);
 static void	window_copy_cursor_down(struct window_mode_entry *, int);
 static void	window_copy_cursor_jump(struct window_mode_entry *);
@@ -5019,7 +5020,7 @@ window_copy_cursor_right(struct window_mode_entry *wme, int all)
 }
 
 static void
-window_copy_cursor_char_start(struct window_mode_entry *wme)
+window_copy_cursor_start_of_character(struct window_mode_entry *wme)
 {
 	struct window_copy_mode_data	*data = wme->data;
 	struct screen			*back_s = data->backing;
@@ -5027,7 +5028,7 @@ window_copy_cursor_char_start(struct window_mode_entry *wme)
 	u_int				 px, py;
 
 	grid_reader_start(&gr, back_s->grid, data->cx, data->cy);
-	grid_reader_cursor_char_start(&gr);
+	grid_reader_cursor_start_of_character(&gr);
 	grid_reader_get_cursor(&gr, &px, &py);
 	window_copy_update_cursor(wme, px, py, 0);
 	if (window_copy_update_selection(wme, 1, 0))
@@ -5108,7 +5109,7 @@ window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 			window_copy_redraw_lines(wme, data->cy, 1);
 	}
 
-	window_copy_cursor_char_start(wme);
+	window_copy_cursor_start_of_character(wme);
 }
 
 static void
@@ -5177,7 +5178,7 @@ window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 			window_copy_redraw_lines(wme, data->cy, 1);
 	}
 
-	window_copy_cursor_char_start(wme);
+	window_copy_cursor_start_of_character(wme);
 }
 
 static void
